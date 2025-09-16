@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuzzUp - We Boost Your Brand</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-container">
+            <div class="logo-bounce">
+                <h1 class="loading-logo">BuzzUp</h1>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Background Particles -->
+    <div id="particles-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand logo-brand" href="#home">
+                <span class="logo-text">BuzzUp</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="sponsoring.html">Sponsoring & Marketing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="hosting.html">Hosting & IT Support</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link login-btn" href="login.html">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="video-background">
+            <video autoplay muted loop>
+                <source src="https://player.vimeo.com/external/342571954.hd.mp4?s=95231c8a7fe2066989c2dcbd9bfb0a7e72b0b8b0&profile_id=175" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        
+        <div class="floating-icons">
+            <div class="floating-icon" style="--delay: 0s; --duration: 8s;">
+                <i class="fab fa-facebook"></i>
+            </div>
+            <div class="floating-icon" style="--delay: 1s; --duration: 10s;">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="floating-icon" style="--delay: 2s; --duration: 12s;">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="floating-icon" style="--delay: 3s; --duration: 9s;">
+                <i class="fab fa-instagram"></i>
+            </div>
+            <div class="floating-icon" style="--delay: 4s; --duration: 11s;">
+                <i class="fas fa-cloud"></i>
+            </div>
+        </div>
+        
+        <div class="container hero-content">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-10">
+                    <h1 class="hero-title">
+                        <span class="typing-text">We Boost Your Brand. We Buzz It Up.</span>
+                    </h1>
+                    <p class="hero-subtitle fade-in-up">
+                        Marketing, Sponsorship & IT solutions for startups and businesses.
+                    </p>
+                    <div class="hero-buttons fade-in-up">
+                        <a href="#services" class="btn btn-primary btn-lg pulse-btn">
+                            <i class="fas fa-rocket me-2"></i>Get Started
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Services Preview Section -->
+    <section id="services" class="services-preview py-5">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="section-title">Our Services</h2>
+                    <p class="section-subtitle">Comprehensive solutions to elevate your business</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3>Sponsoring & Marketing</h3>
+                        <p>Connect your brand with opportunities through strategic sponsorship deals and cutting-edge marketing campaigns.</p>
+                        <a href="sponsoring.html" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3>Hosting & IT Support</h3>
+                        <p>Reliable web hosting, cloud solutions, and 24/7 IT support to keep your business running smoothly.</p>
+                        <a href="hosting.html" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Happy Clients</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="1200">0</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="99">0</div>
+                        <div class="stat-label">Uptime %</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="24">0</div>
+                        <div class="stat-label">Support Hours</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-12 mb-4">
+                    <div class="footer-logo">
+                        <h3>BuzzUp</h3>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-3 footer-item">
+                    <h5><i class="fas fa-envelope me-2"></i>Email</h5>
+                    <p>buzzup.contact@gmail.com</p>
+                </div>
+                
+                <div class="col-md-4 mb-3 footer-item">
+                    <h5><i class="fas fa-phone me-2"></i>Phone</h5>
+                    <p>+216 99 223 761</p>
+                </div>
+                
+                <div class="col-md-4 mb-3 footer-item">
+                    <h5><i class="fas fa-globe me-2"></i>Follow Us</h5>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 BuzzUp. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

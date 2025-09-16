@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BuzzUp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+    <!-- Animated Particles Background -->
+    <div id="login-particles"></div>
+
+    <div class="login-container">
+        <div class="container-fluid h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-lg-6 d-none d-lg-flex">
+                    <div class="login-banner">
+                        <h1 class="banner-title">Welcome to <span>BuzzUp</span></h1>
+                        <p class="banner-subtitle">Join thousands of businesses already growing with us</p>
+                        <div class="banner-features">
+                            <div class="feature">
+                                <i class="fas fa-rocket"></i>
+                                <span>Boost Your Brand</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Track Performance</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-support"></i>
+                                <span>24/7 Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="login-form-container">
+                        <!-- Logo for mobile -->
+                        <div class="mobile-logo d-lg-none text-center mb-4">
+                            <h2>BuzzUp</h2>
+                        </div>
+                        
+                        <!-- Login Form -->
+                        <div class="login-form" id="loginForm">
+                            <h3 class="form-title">Sign In</h3>
+                            <p class="form-subtitle">Access your dashboard</p>
+                            
+                            <form id="loginFormElement" method="POST">
+                                <div class="mb-3">
+                                    <label for="loginEmail" class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-icon">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="loginEmail" name="email" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-icon">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="loginPassword" name="password" required>
+                                        <span class="password-toggle" onclick="togglePassword('loginPassword', this)">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary w-100 mb-3">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                                </button>
+                                
+                                <div class="text-center">
+                                    <a href="#" class="forgot-password">Forgot Password?</a>
+                                </div>
+                            </form>
+                            
+                            <div class="form-divider">
+                                <span>or</span>
+                            </div>
+                            
+                            <div class="text-center">
+                                <p>Don't have an account? <a href="#" class="switch-form" onclick="switchToRegister()">Sign Up</a></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Register Form -->
+                        <div class="login-form" id="registerForm" style="display: none;">
+                            <h3 class="form-title">Create Account</h3>
+                            <p class="form-subtitle">Join the BuzzUp community</p>
+                            
+                            <form id="registerFormElement" method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <div class="input-group">
+                                            <span class="input-icon">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+                                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <div class="input-group">
+                                            <span class="input-icon">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+                                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="registerEmail" class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-icon">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="registerEmail" name="email" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-icon">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="registerPassword" name="password" required>
+                                        <span class="password-toggle" onclick="togglePassword('registerPassword', this)">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                    <div class="input-group">
+                                        <span class="input-icon">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        <span class="password-toggle" onclick="togglePassword('confirmPassword', this)">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                                    </label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary w-100 mb-3">
+                                    <i class="fas fa-user-plus me-2"></i>Create Account
+                                </button>
+                            </form>
+                            
+                            <div class="form-divider">
+                                <span>or</span>
+                            </div>
+                            
+                            <div class="text-center">
+                                <p>Already have an account? <a href="#" class="switch-form" onclick="switchToLogin()">Sign In</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Home -->
+    <div class="back-to-home">
+        <a href="index.html" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left me-2"></i>Back to Home
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="main.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
