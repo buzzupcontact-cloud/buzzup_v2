@@ -1,0 +1,109 @@
+---
+# Application deployment tasks
+- name: Create backup of current deployment
+  archive:
+    path: "{{ web_root }}"
+    dest: "{{ backup_dir }}/buzzup-backup-{{ deployment_timestamp }}.tar.gz"
+    format: gz
+  when: web_root is directory
+  ignore_errors: yes
+
+- name: Clone or update application repository
+  git:
+    repo: "{{ project_repo }}"
+    dest: "{{ web_root }}"
+    version: "{{ project_branch }}"
+    force: yes
+  become_user: www-data
+  notify: reload apache
+
+- name: Set proper ownership for web files
+  file:
+    path: "{{ web_root }}"
+    owner: www-data
+    group: www-data
+    recurse: yes
+    state: directory
+
+- name: Set proper permissions for web files
+  file:
+    path: "{{ web_root }}"
+    mode: '0755'
+    recurse: yes
+    state: directory
+
+- name: Set executable permissions for PHP files
+  find:
+    paths: "{{ web_root }}"
+    patterns: "*.php"
+    recurse: yes
+  register: php_files
+
+- name: Make PHP files executable
+  file:
+    path: "{{ item.path }}"
+    mode: '0644'
+  loop: "{{ php_files.files }}"
+
+- name: Create application configuration file
+  template:
+    src: config.php.j2
+    dest: "{{ web_root }}/php/config.php"
+    owner: www-data
+    group: www-data
+    mode: '0640'
+    backup: yes
+
+- name: Create .htaccess file for security
+  template:
+    src: htaccess.j2
+    dest: "{{ web_root }}/.htaccess"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Create uploads directory
+  file:
+    path: "{{ web_root }}/uploads"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Create logs directory
+  file:
+    path: "{{ web_root }}/logs"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Set up log rotation for application logs
+  template:
+    src: app-logrotate.j2
+    dest: "/etc/logrotate.d/{{ project_name }}"
+
+- name: Remove sensitive files from web root
+  file:
+    path: "{{ web_root }}/{{ item }}"
+    state: absent
+  loop:
+    - .git
+    - .gitignore
+    - README.md
+    - ansible
+    - .env.example
+
+- name: Create robots.txt
+  template:
+    src: robots.txt.j2
+    dest: "{{ web_root }}/robots.txt"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Clean up old backups (keep last 5)
+  shell: |
+    cd {{ backup_dir }}
+    ls -t buzzup-backup-*.tar.gz | tail -n +6 | xargs -r rm --
+  ignore_errors: yes

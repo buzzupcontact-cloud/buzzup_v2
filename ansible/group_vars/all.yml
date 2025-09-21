@@ -1,0 +1,42 @@
+---
+# Global variables for all hosts
+timezone: "UTC"
+locale: "en_US.UTF-8"
+
+# System packages to install
+system_packages:
+  - curl
+  - wget
+  - unzip
+  - git
+  - htop
+  - nano
+  - ufw
+  - fail2ban
+  - certbot
+  - python3-certbot-apache
+
+# PHP configuration
+php_memory_limit: "256M"
+php_max_execution_time: "300"
+php_max_input_vars: "3000"
+php_upload_max_filesize: "64M"
+php_post_max_size: "64M"
+
+# MySQL configuration
+mysql_bind_address: "127.0.0.1"
+mysql_max_connections: "100"
+mysql_innodb_buffer_pool_size: "128M"
+
+# Apache configuration
+apache_server_tokens: "Prod"
+apache_server_signature: "Off"
+apache_timeout: "300"
+apache_keepalive: "On"
+apache_max_keepalive_requests: "100"
+apache_keepalive_timeout: "5"
+
+# Security settings
+fail2ban_enabled: true
+ufw_enabled: true
+automatic_updates: true

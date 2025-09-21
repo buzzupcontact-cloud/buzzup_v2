@@ -1,0 +1,81 @@
+---
+# MySQL installation and configuration
+- name: Install MySQL server
+  apt:
+    name: 
+      - mysql-server
+      - mysql-client
+      - python3-pymysql
+    state: present
+
+- name: Start and enable MySQL
+  systemd:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Set MySQL root password
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: Create MySQL configuration file for root
+  template:
+    src: root.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Remove anonymous MySQL users
+  mysql_user:
+    name: ""
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Remove MySQL test database
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Create application database
+  mysql_db:
+    name: "{{ mysql_database }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+
+- name: Create application database user
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_database }}.*:ALL"
+    host: localhost
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Configure MySQL
+  template:
+    src: mysqld.cnf.j2
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    backup: yes
+  notify: restart mysql
+
+- name: Import database schema
+  mysql_db:
+    name: "{{ mysql_database }}"
+    state: import
+    target: "{{ web_root }}/supabase/migrations/20250916233238_red_bread.sql"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  when: import_schema | default(true)
+  ignore_errors: yes

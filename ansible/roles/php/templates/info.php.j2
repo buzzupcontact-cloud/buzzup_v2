@@ -1,0 +1,9 @@
+<?php
+// PHP Information Page - Only for development/staging
+if ('{{ app_environment }}' === 'production') {
+    http_response_code(404);
+    exit('Not Found');
+}
+
+phpinfo();
+?>

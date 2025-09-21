@@ -1,0 +1,81 @@
+---
+# Main deployment playbook for BuzzUp website
+- name: Deploy BuzzUp Website
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+  
+  vars:
+    deployment_timestamp: "{{ ansible_date_time.epoch }}"
+    backup_dir: "/var/backups/buzzup"
+    
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      tags: [system]
+    
+    - name: Create backup directory
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+      tags: [backup]
+
+  roles:
+    - role: system
+      tags: [system]
+    - role: security
+      tags: [security]
+    - role: mysql
+      tags: [database]
+    - role: php
+      tags: [php]
+    - role: apache
+      tags: [webserver]
+    - role: application
+      tags: [app]
+    - role: ssl
+      tags: [ssl]
+      when: enable_ssl | default(false)
+
+  post_tasks:
+    - name: Restart services
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      loop:
+        - apache2
+        - mysql
+      tags: [services]
+    
+    - name: Verify website is accessible
+      uri:
+        url: "http://{{ server_name }}"
+        method: GET
+        status_code: 200
+      delegate_to: localhost
+      tags: [verify]
+    
+    - name: Send deployment notification
+      debug:
+        msg: "BuzzUp website deployed successfully at {{ ansible_date_time.iso8601 }}"
+      tags: [notify]
+
+  handlers:
+    - name: restart apache
+      systemd:
+        name: apache2
+        state: restarted
+    
+    - name: restart mysql
+      systemd:
+        name: mysql
+        state: restarted
+    
+    - name: reload apache
+      systemd:
+        name: apache2
+        state: reloaded
