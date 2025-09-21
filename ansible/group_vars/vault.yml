@@ -1,0 +1,20 @@
+---
+# Encrypted variables (use ansible-vault to encrypt this file)
+# Run: ansible-vault encrypt group_vars/vault.yml
+
+# Production database passwords
+vault_mysql_root_password: "your_super_secure_root_password_here"
+vault_mysql_password: "your_secure_database_password_here"
+
+# Staging database passwords
+vault_mysql_root_password_staging: "your_staging_root_password_here"
+vault_mysql_password_staging: "your_staging_database_password_here"
+
+# JWT secret for application
+vault_jwt_secret: "your_super_secret_jwt_key_change_in_production"
+
+# Email configuration (if needed)
+vault_smtp_password: "your_email_app_password_here"
+
+# Additional secrets
+vault_app_secret_key: "your_application_secret_key_here"

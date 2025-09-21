@@ -1,0 +1,145 @@
+---
+# Site-wide playbook for BuzzUp infrastructure
+- import_playbook: deploy.yml
+  tags: [deploy]
+
+- name: System Maintenance Tasks
+  hosts: all
+  become: yes
+  gather_facts: yes
+  tags: [maintenance]
+  
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    
+    - name: Upgrade all packages
+      apt:
+        upgrade: safe
+        autoremove: yes
+        autoclean: yes
+    
+    - name: Check disk usage
+      shell: df -h
+      register: disk_usage
+      changed_when: false
+    
+    - name: Display disk usage
+      debug:
+        var: disk_usage.stdout_lines
+    
+    - name: Clean up old log files
+      find:
+        paths: /var/log
+        age: 30d
+        patterns: "*.log.*.gz"
+      register: old_logs
+    
+    - name: Remove old compressed logs
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ old_logs.files }}"
+      when: old_logs.files | length > 0
+    
+    - name: Restart services if needed
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - apache2
+        - mysql
+        - "php{{ php_version }}-fpm"
+      when: ansible_reboot_pending | default(false)
+
+- name: Security Audit
+  hosts: all
+  become: yes
+  gather_facts: yes
+  tags: [security, audit]
+  
+  tasks:
+    - name: Check for failed login attempts
+      shell: grep "Failed password" /var/log/auth.log | tail -10
+      register: failed_logins
+      changed_when: false
+      ignore_errors: yes
+    
+    - name: Display recent failed logins
+      debug:
+        var: failed_logins.stdout_lines
+      when: failed_logins.stdout_lines | length > 0
+    
+    - name: Check UFW status
+      command: ufw status
+      register: ufw_status
+      changed_when: false
+    
+    - name: Display firewall status
+      debug:
+        var: ufw_status.stdout_lines
+    
+    - name: Check SSL certificate expiry
+      shell: |
+        if [ -f "/etc/letsencrypt/live/{{ server_name }}/fullchain.pem" ]; then
+          openssl x509 -in /etc/letsencrypt/live/{{ server_name }}/fullchain.pem -noout -dates
+        else
+          echo "No SSL certificate found"
+        fi
+      register: ssl_dates
+      changed_when: false
+    
+    - name: Display SSL certificate info
+      debug:
+        var: ssl_dates.stdout_lines
+
+- name: Backup Tasks
+  hosts: all
+  become: yes
+  gather_facts: yes
+  tags: [backup]
+  
+  vars:
+    backup_timestamp: "{{ ansible_date_time.epoch }}"
+  
+  tasks:
+    - name: Create backup directory
+      file:
+        path: "/var/backups/buzzup/{{ backup_timestamp }}"
+        state: directory
+        mode: '0755'
+    
+    - name: Backup database
+      mysql_db:
+        name: "{{ mysql_database }}"
+        state: dump
+        target: "/var/backups/buzzup/{{ backup_timestamp }}/database.sql"
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+    
+    - name: Backup website files
+      archive:
+        path: "{{ web_root }}"
+        dest: "/var/backups/buzzup/{{ backup_timestamp }}/website.tar.gz"
+        format: gz
+    
+    - name: Backup Apache configuration
+      archive:
+        path: /etc/apache2
+        dest: "/var/backups/buzzup/{{ backup_timestamp }}/apache-config.tar.gz"
+        format: gz
+    
+    - name: Clean up old backups (keep last 7 days)
+      find:
+        paths: /var/backups/buzzup
+        age: 7d
+        file_type: directory
+      register: old_backups
+    
+    - name: Remove old backup directories
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ old_backups.files }}"

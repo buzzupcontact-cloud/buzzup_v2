@@ -1,0 +1,65 @@
+---
+# Apache installation and configuration
+- name: Install Apache
+  apt:
+    name: apache2
+    state: present
+
+- name: Enable Apache modules
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ apache_modules }}"
+  notify: restart apache
+
+- name: Configure Apache main settings
+  template:
+    src: apache2.conf.j2
+    dest: /etc/apache2/apache2.conf
+    backup: yes
+  notify: restart apache
+
+- name: Configure Apache security settings
+  template:
+    src: security.conf.j2
+    dest: /etc/apache2/conf-available/security.conf
+    backup: yes
+  notify: restart apache
+
+- name: Enable security configuration
+  command: a2enconf security
+  notify: restart apache
+
+- name: Create virtual host configuration
+  template:
+    src: vhost.conf.j2
+    dest: "/etc/apache2/sites-available/{{ server_name }}.conf"
+    backup: yes
+  notify: restart apache
+
+- name: Enable virtual host
+  command: "a2ensite {{ server_name }}.conf"
+  notify: restart apache
+
+- name: Disable default Apache site
+  command: a2dissite 000-default
+  notify: restart apache
+
+- name: Create Apache log directory
+  file:
+    path: "/var/log/apache2/{{ server_name }}"
+    state: directory
+    owner: www-data
+    group: adm
+    mode: '0755'
+
+- name: Configure log rotation
+  template:
+    src: logrotate.j2
+    dest: "/etc/logrotate.d/apache2-{{ server_name }}"
+
+- name: Start and enable Apache
+  systemd:
+    name: apache2
+    state: started
+    enabled: yes

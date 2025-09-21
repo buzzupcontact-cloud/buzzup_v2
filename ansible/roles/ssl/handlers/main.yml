@@ -1,0 +1,6 @@
+---
+# SSL handlers
+- name: restart apache
+  systemd:
+    name: apache2
+    state: restarted

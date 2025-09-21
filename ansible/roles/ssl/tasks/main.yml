@@ -1,0 +1,54 @@
+---
+# SSL certificate installation with Let's Encrypt
+- name: Install Certbot
+  apt:
+    name: 
+      - certbot
+      - python3-certbot-apache
+    state: present
+
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ server_name }}/fullchain.pem"
+  register: ssl_cert
+
+- name: Obtain SSL certificate
+  command: >
+    certbot --apache 
+    --non-interactive 
+    --agree-tos 
+    --email {{ ssl_email }} 
+    --domains {{ server_name }}{% if server_aliases is defined %},{{ server_aliases | join(',') }}{% endif %}
+    --redirect
+  when: not ssl_cert.stat.exists
+  notify: restart apache
+
+- name: Set up automatic certificate renewal
+  cron:
+    name: "Renew Let's Encrypt certificates"
+    minute: "0"
+    hour: "2"
+    job: "/usr/bin/certbot renew --quiet --post-hook 'systemctl reload apache2'"
+    user: root
+
+- name: Test certificate renewal
+  command: certbot renew --dry-run
+  register: renewal_test
+  failed_when: renewal_test.rc != 0
+  changed_when: false
+
+- name: Configure SSL security settings
+  template:
+    src: ssl-params.conf.j2
+    dest: /etc/apache2/conf-available/ssl-params.conf
+  notify: restart apache
+
+- name: Enable SSL parameters
+  command: a2enconf ssl-params
+  notify: restart apache
+
+- name: Generate strong Diffie-Hellman group
+  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  args:
+    creates: /etc/ssl/certs/dhparam.pem
+  notify: restart apache

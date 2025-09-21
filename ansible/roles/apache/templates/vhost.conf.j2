@@ -1,0 +1,98 @@
+<VirtualHost *:80>
+    ServerName {{ server_name }}
+    {% if server_aliases is defined %}
+    {% for alias in server_aliases %}
+    ServerAlias {{ alias }}
+    {% endfor %}
+    {% endif %}
+    
+    DocumentRoot {{ web_root }}
+    DirectoryIndex index.php index.html
+    
+    <Directory {{ web_root }}>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+        
+        # PHP Configuration
+        <FilesMatch \.php$>
+            SetHandler "proxy:unix:/run/php/php{{ php_version }}-fpm.sock|fcgi://localhost"
+        </FilesMatch>
+    </Directory>
+    
+    # Logging
+    ErrorLog /var/log/apache2/{{ server_name }}/error.log
+    CustomLog /var/log/apache2/{{ server_name }}/access.log combined
+    
+    # Security
+    <Files ".ht*">
+        Require all denied
+    </Files>
+    
+    # Deny access to sensitive files
+    <FilesMatch "\.(env|config|ini|log|bak)$">
+        Require all denied
+    </FilesMatch>
+    
+    # Deny access to version control directories
+    <DirectoryMatch "/(\.git|\.svn|\.hg|CVS)/">
+        Require all denied
+    </DirectoryMatch>
+    
+    # Redirect to HTTPS (will be handled by SSL configuration)
+    {% if enable_ssl | default(false) %}
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    {% endif %}
+</VirtualHost>
+
+{% if enable_ssl | default(false) %}
+<VirtualHost *:443>
+    ServerName {{ server_name }}
+    {% if server_aliases is defined %}
+    {% for alias in server_aliases %}
+    ServerAlias {{ alias }}
+    {% endfor %}
+    {% endif %}
+    
+    DocumentRoot {{ web_root }}
+    DirectoryIndex index.php index.html
+    
+    <Directory {{ web_root }}>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+        
+        # PHP Configuration
+        <FilesMatch \.php$>
+            SetHandler "proxy:unix:/run/php/php{{ php_version }}-fpm.sock|fcgi://localhost"
+        </FilesMatch>
+    </Directory>
+    
+    # SSL Configuration (will be managed by Certbot)
+    SSLEngine on
+    
+    # Logging
+    ErrorLog /var/log/apache2/{{ server_name }}/ssl_error.log
+    CustomLog /var/log/apache2/{{ server_name }}/ssl_access.log combined
+    
+    # Security
+    <Files ".ht*">
+        Require all denied
+    </Files>
+    
+    # Deny access to sensitive files
+    <FilesMatch "\.(env|config|ini|log|bak)$">
+        Require all denied
+    </FilesMatch>
+    
+    # Deny access to version control directories
+    <DirectoryMatch "/(\.git|\.svn|\.hg|CVS)/">
+        Require all denied
+    </DirectoryMatch>
+    
+    # HSTS Header
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+</VirtualHost>
+{% endif %}
